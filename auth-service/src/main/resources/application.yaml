@@ -1,3 +1,24 @@
 spring:
   application:
     name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/authdb
+    username: admin
+    password: admin123
+
+  #Esse carinha cria garante que ao iniciar o serviço seja gerada automaticamente a tabela (Evita o bug)
+  #Se já existir, ele não faz nada
+  #Não vou trocar, mas pode ser validate em prod
+  jpa:
+    hibernate:
+      ddl-auto: update
+  #Pra facilitar a vida ao excutar com os debugs do JPA
+    show-sql: true
+
+server:
+  port: 8081
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
