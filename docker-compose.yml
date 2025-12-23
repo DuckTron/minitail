@@ -1,0 +1,54 @@
+services:
+  postgres-auth:
+    image: postgres:16
+    container_name: postgres-auth
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - auth-data:/var/lib/postgresql/data
+
+  postgres-profile:
+    image: postgres:16
+    container_name: postgres-profile
+    environment:
+      POSTGRES_DB: profiledb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5433:5432"
+    volumes:
+      - profile-data:/var/lib/postgresql/data
+
+  postgres-story:
+    image: postgres:16
+    container_name: postgres-story
+    environment:
+      POSTGRES_DB: storydb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5434:5432"
+    volumes:
+      - story-data:/var/lib/postgresql/data
+
+  postgres-notification:
+    image: postgres:16
+    container_name: postgres-notification
+    environment:
+      POSTGRES_DB: notificationdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5435:5432"
+    volumes:
+      - notification-data:/var/lib/postgresql/data
+
+volumes:
+  auth-data:
+  profile-data:
+  story-data:
+  notification-data:
