@@ -1,4 +1,21 @@
 services:
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8761 || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - storytail-network
+
   postgres-auth:
     image: postgres:16
     container_name: postgres-auth
@@ -10,6 +27,13 @@ services:
       - "5432:5432"
     volumes:
       - auth-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d authdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - storytail-network
 
   postgres-profile:
     image: postgres:16
@@ -22,6 +46,13 @@ services:
       - "5433:5432"
     volumes:
       - profile-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d profiledb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - storytail-network
 
   postgres-story:
     image: postgres:16
@@ -34,6 +65,13 @@ services:
       - "5434:5432"
     volumes:
       - story-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d storydb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - storytail-network
 
   postgres-notification:
     image: postgres:16
@@ -46,9 +84,36 @@ services:
       - "5435:5432"
     volumes:
       - notification-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d notificationdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - storytail-network
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      postgres-auth:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/authdb
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    networks:
+      - storytail-network
 
 volumes:
   auth-data:
   profile-data:
   story-data:
   notification-data:
+
+networks:
+  storytail-network:
+    driver: bridge
