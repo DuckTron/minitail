@@ -1,6 +1,7 @@
 package com.ministorytail.auth.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ministorytail.auth.dto.AuthResponse;
 import com.ministorytail.auth.dto.LoginRequest;
@@ -17,17 +18,18 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email já cadastrado");
         }
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setPassword(request.getPassword());
+        User user = User.registrar(
+                request.getName(),
+                request.getEmail(),
+                request.getPhone(),
+                request.getPassword());
 
         User savedUser = userRepository.save(user);
 
@@ -38,12 +40,13 @@ public class AuthService {
                 "Usuário registrado com sucesso");
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        if (!user.validarCredenciais(request.getPassword())) {
             throw new RuntimeException("Credenciais inválidas");
         }
 
