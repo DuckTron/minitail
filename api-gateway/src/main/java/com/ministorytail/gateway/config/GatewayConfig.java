@@ -15,6 +15,22 @@ public class GatewayConfig {
                         .path("/auth-service/**")
                         .filters(f -> f.stripPrefix(1))
                         .uri("lb://AUTH-SERVICE"))
+
+                .route("profile-service", r -> r
+                        .path("/profile-service/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://PROFILE-SERVICE"))
+
+                .route("story-service", r -> r
+                        .path("/story-service/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://STORY-SERVICE"))
+
+                .route("notification-service", r -> r
+                        .path("/notification-service/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://NOTIFICATION-SERVICE"))
+
                 .build();
     }
 }
