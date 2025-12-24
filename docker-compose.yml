@@ -102,9 +102,6 @@ services:
         condition: service_healthy
       postgres-auth:
         condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/authdb
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     networks:
       - storytail-network
 
