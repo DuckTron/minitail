@@ -13,18 +13,22 @@ public class GatewayConfig {
                 return builder.routes()
                                 .route("auth", r -> r
                                                 .path("/auth/**")
+                                                .filters(f -> f.stripPrefix(1))
                                                 .uri("lb://AUTH-SERVICE"))
 
                                 .route("profile", r -> r
                                                 .path("/profile/**")
+                                                .filters(f -> f.stripPrefix(1))
                                                 .uri("lb://PROFILE-SERVICE"))
 
                                 .route("stories", r -> r
                                                 .path("/stories/**")
+                                                .filters(f -> f.stripPrefix(1))
                                                 .uri("lb://STORY-SERVICE"))
 
                                 .route("notifications", r -> r
                                                 .path("/notifications/**")
+                                                .filters(f -> f.stripPrefix(1))
                                                 .uri("lb://NOTIFICATION-SERVICE"))
 
                                 .build();
