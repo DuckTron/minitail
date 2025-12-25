@@ -16,6 +16,25 @@ services:
     networks:
       - storytail-network
 
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: storytail-rabbitmq
+    ports:
+      - "5672:5672" # AMQP protocol
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: storytail
+      RABBITMQ_DEFAULT_PASS: storytail123
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - storytail-network
+
   postgres-auth:
     image: postgres:16
     container_name: postgres-auth
@@ -92,25 +111,6 @@ services:
     networks:
       - storytail-network
 
-  rabbitmq:
-    image: rabbitmq:3.13-management
-    container_name: storytail-rabbitmq
-    ports:
-      - "5672:5672" # AMQP protocol
-      - "15672:15672" # Management UI
-    environment:
-      RABBITMQ_DEFAULT_USER: storytail
-      RABBITMQ_DEFAULT_PASS: storytail123
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
-    healthcheck:
-      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - storytail-network
-
   auth-service:
     build: ./auth-service
     container_name: auth-service
@@ -121,6 +121,19 @@ services:
         condition: service_healthy
     networks:
       - storytail-network
+
+  profile-service:
+    build: ./profile-service
+    container_name: profile-service
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      postgres-profile:
+        condition: service_healthy
+    networks:
+      - storytail-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
 
   api-gateway:
     build: ./api-gateway
