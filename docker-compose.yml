@@ -18,10 +18,10 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.13-management
-    container_name: storytail-rabbitmq
+    container_name: rabbitmq
     ports:
-      - "5672:5672" # AMQP protocol
-      - "15672:15672" # Management UI
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: storytail
       RABBITMQ_DEFAULT_PASS: storytail123
@@ -42,8 +42,6 @@ services:
       POSTGRES_DB: authdb
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
-    ports:
-      - "5432:5432"
     volumes:
       - auth-data:/var/lib/postgresql/data
     healthcheck:
@@ -61,8 +59,6 @@ services:
       POSTGRES_DB: profiledb
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
-    ports:
-      - "5433:5432"
     volumes:
       - profile-data:/var/lib/postgresql/data
     healthcheck:
@@ -80,8 +76,6 @@ services:
       POSTGRES_DB: storydb
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
-    ports:
-      - "5434:5432"
     volumes:
       - story-data:/var/lib/postgresql/data
     healthcheck:
@@ -99,8 +93,6 @@ services:
       POSTGRES_DB: notificationdb
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
-    ports:
-      - "5435:5432"
     volumes:
       - notification-data:/var/lib/postgresql/data
     healthcheck:
@@ -119,6 +111,10 @@ services:
         condition: service_healthy
       postgres-auth:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - storytail-network
 
@@ -130,10 +126,21 @@ services:
         condition: service_healthy
       postgres-profile:
         condition: service_healthy
-    networks:
-      - storytail-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - storytail-network
+
+  prompt-service:
+    build: ./prompt-service
+    container_name: prompt-service
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - storytail-network
 
   api-gateway:
     build: ./api-gateway
@@ -143,10 +150,10 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
-    networks:
-      - storytail-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - storytail-network
 
 volumes:
   auth-data:

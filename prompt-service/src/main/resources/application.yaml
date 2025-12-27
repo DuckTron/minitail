@@ -1,3 +1,20 @@
 spring:
   application:
-    name: prompt-service
+    name: PROMPT-SERVICE
+
+server:
+  port: 8083
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    com.ministorytail.prompt: DEBUG
+    org.springframework.web: INFO
