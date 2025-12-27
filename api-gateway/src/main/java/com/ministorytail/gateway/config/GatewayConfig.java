@@ -21,6 +21,12 @@ public class GatewayConfig {
                                                 .filters(f -> f.stripPrefix(1))
                                                 .uri("lb://PROFILE-SERVICE"))
 
+                                // ✅ ADICIONA ESTA ROTA DO PROMPT SERVICE
+                                .route("prompts", r -> r
+                                                .path("/prompts/**")
+                                                .filters(f -> f.stripPrefix(1))
+                                                .uri("lb://PROMPT-SERVICE"))
+
                                 .route("stories", r -> r
                                                 .path("/stories/**")
                                                 .filters(f -> f.stripPrefix(1))
