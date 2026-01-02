@@ -2,3 +2,8 @@
 * text=auto
 # Forçar scripts shell a ter sempre quebras de linha Unix (LF)
 *.sh text eol=lf
+# Forçar ficheiros YAML a ter sempre quebras de linha Unix (LF)
+*.yaml text eol=lf  
+*.yml text eol=lf
+# Forçar ficheiros Dockerfile a ter sempre quebras de linha Unix (LF)
+Dockerfile text eol=lf
