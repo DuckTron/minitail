@@ -1,0 +1,68 @@
+{
+  "info": {
+    "name": "MiniTail - API Gateway",
+    "description": "Coleção de apoio para demonstrar integração e comportamento do API Gateway do projeto MiniTail. Esta coleção não valida regras de negócio.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Login via Gateway",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"teste@teste.com\",\n  \"password\": \"123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/auth/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["auth", "api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Exposição Controlada - Endpoint Inexistente",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Fallback (Serviço Indisponível)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"teste@teste.com\",\n  \"password\": \"123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/auth/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["auth", "api", "auth", "login"]
+        }
+      }
+    }
+  ]
+}
